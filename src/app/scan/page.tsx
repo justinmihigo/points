@@ -2,8 +2,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { Scanner } from "@yudiel/react-qr-scanner"
-import navigate from '../actions';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { addResult } from '@/utils/scan/scanResSlice';
 import CryptoJS, { AES } from "crypto-js"
 

@@ -1,41 +1,41 @@
 'use client'
 import Navbar from '@/components/dashboard/navbar'
-import QrScanner from '@/components/Scanner'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/utils/store'
-import ReactConfetti from 'react-confetti'
-export  const leaderBoardData = [
-    {
-        name: 'Jules Sentore',
-        points: '5000'
-    },
-    {
-        name: 'Joe Doe',
-        points: '4000'
-    },
-    {
-        name: 'Jack Doe',
-        points: '3000'
-    },
-    {
-        name: 'Jane Doe',
-        points: '2000'
-    }
+// import ReactConfetti from 'react-confetti'
+import { leaderBoardData } from './data'
+// export  const leaderBoardData = [
+//     {
+//         name: 'Jules Sentore',
+//         points: '5000'
+//     },
+//     {
+//         name: 'Joe Doe',
+//         points: '4000'
+//     },
+//     {
+//         name: 'Jack Doe',
+//         points: '3000'
+//     },
+//     {
+//         name: 'Jane Doe',
+//         points: '2000'
+//     }
 
-]
-const Dashboard = (): any => {
-    const display = () => {
-        if (result.includes('+500')) {
-            return <ReactConfetti />
-        }
-        if (result.includes('-500')) {
-            return <ReactConfetti />
-        }
+// ]
+const Dashboard = ()=> {
+    // const display = () => {
+    //     if (result.includes('+500')) {
+    //         return <ReactConfetti />
+    //     }
+    //     if (result.includes('-500')) {
+    //         return <ReactConfetti />
+    //     }
 
-    }
+    // }
   
 
     const result = useSelector((state: RootState) => state.scanResults.results);

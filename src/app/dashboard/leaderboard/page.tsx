@@ -1,7 +1,7 @@
 'use client'
 import Navbar from '@/components/dashboard/navbar'
 import React from 'react'
-import { leaderBoardData } from '../page'
+import { leaderBoardData } from '../data'
 
 const Leaderboard = () => {
     return (
