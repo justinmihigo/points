@@ -15,5 +15,4 @@ const scanResults= createSlice(
 )
 
 export const { addResult } = scanResults.actions;
-
 export default scanResults.reducer;
