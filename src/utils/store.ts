@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import scanResults from "./scan/scanResSlice"
+import userInfo from "./user/user"
 const store= ()=>{
    return configureStore({
         reducer: {
-            scanResults
+            scanResults,
+            userInfo
         }
     })
 }
