@@ -2,14 +2,32 @@
 import Navbar from '@/components/Navbar'
 import { RootState } from '@/utils/store'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { addResult } from '@/utils/scan/scanResSlice'
+import { useRouter } from 'next/navigation'
 
 const Home = () => {
+  const router = useRouter();
+  const [userInfo, setUserInfo]=useState<Record<string,string>>();
+  useEffect(()=>{
+    const authtoken = localStorage.getItem('token');    
+    const user= JSON.parse(localStorage.getItem('user')!);
+    
+    if(authtoken && user){
+      const userId= user.user._id;
+      setUserInfo({token:JSON.parse(authtoken),userId});
+    }
+  }, []);
+  console.log(userInfo);
   const dispatch=useDispatch();
   const results= useSelector((state:RootState)=> state.scanResults.results);
   console.log('results', results, typeof results);
+  useEffect(()=>{
+    if(userInfo){
+      router.push('/dashboard');
+    }
+  })
   return (
     <div>
       <Navbar />
