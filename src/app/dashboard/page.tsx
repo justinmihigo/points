@@ -2,41 +2,77 @@
 import Navbar from '@/components/dashboard/navbar'
 import { useRouter } from 'next/navigation'
 
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/utils/store'
 import ReactConfetti from 'react-confetti'
 import { leaderBoardData } from './data'
+import { setUser } from '@/utils/user/user'
 
 const Dashboard = () => {
-    const user = useSelector((state: RootState) => state.userInfo.user);
-    
-
-
+    const router = useRouter();
+    let user = useSelector((state: RootState) => state.userInfo.user);
     const result = useSelector((state: RootState) => state.scanResults.results);
-    console.log('result:  ', result);
-    console.log(result);
+    const dispatch = useDispatch();
+    const [userInfo, setUserInfo] = useState<Record<string, string>>();
+
     const display = () => {
         if (result.includes('500')) {
-            return(<div>
+            return (<div>
                 <ReactConfetti tweenDuration={1000} recycle={false} />
             </div>)
         }
-
-
     }
-    const router = useRouter();
+
+    const getUser= async (id:string, token:any)=>{
+        console.log(token?.token)
+        const response = await fetch(`http://localhost:3005/api/users/getuser/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token.token}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            dispatch(setUser({...user, name: data.fullname, phone: data.phone, data: data.points }));
+            console.log(data);
+            return data;
+        } else {
+            console.log(response)
+            console.log('Error fetching user');
+        }
+    }
+    useEffect(() => {
+        const authtoken = localStorage.getItem('token');
+        const users = JSON.parse(localStorage.getItem('user')!);
+        if (authtoken && users) {
+            const userId = users.user._id;
+            console.log(authtoken, userId);
+            setUserInfo({ token: JSON.parse(authtoken), userId });
+        }
+    }, []);
+
+    useEffect(()=>{
+        console.log(userInfo);
+        console.log(userInfo?.userId, userInfo?.token);
+        if (userInfo) {
+            getUser(userInfo.userId, userInfo.token);
+        }
+    }, [userInfo]);
+    
     return (
         <>
             <div>
-                <Navbar />
+                <Navbar name={user.name || ''} />
                 <div className='m-10'>
-                    
-                        {display()}
-                    
+
+                    {display()}
+
                     <div>
                         <h1 className='text-[25px] font-bold'>Dashboard</h1>
-                        <h1 className=''>Hi, Jules Sentore</h1>
+                        <h1 className=''>Hi, {user.name}</h1>
                     </div>
                     <section className='py-10 flex flex-col items-center justify-center'>
                         <h2 className='text-[20px] font-bold py-5'>Points</h2>

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import user from '../../../public/user.svg'
-const DashboardNavbar = () => {
+const DashboardNavbar = ({name}:{name:string}) => {
     return (
         <div className='inset-0 flex flex-row justify-center p-3 py-5 bg-primary w-full mb-10'>
             <div className='flex flex-row justify-around w-full'>
@@ -13,7 +13,7 @@ const DashboardNavbar = () => {
                 <div>
                     <Link href='/contact' className='text-secondary flex flex-row justify-center items-center gap-x-5'>
                         <Image src={user} alt='user' className=' w-5' />
-                        <span>Jules Sentore</span>
+                        <span>{name}</span>
                     </Link>
                 </div>
 

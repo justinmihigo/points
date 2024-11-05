@@ -45,13 +45,14 @@ const scan = () => {
               const realWord = decryptedResult.toString(CryptoJS.enc.Utf8);
               setResult(realWord);
               console.log('realWord', realWord);
-              if (realWord === "active" || realWord === "inactive" && !userFromLs) {
+              console.log('user', userFromLs);
+              if ((realWord === "active" || realWord === "inactive") && !userFromLs) {
                 dispatch(addResult(result[0].rawValue));
                 dispatch(setUser({ ...user, type: realWord, isActive: realWord === 'active' }));
                 localStorage.setItem('user', JSON.stringify({...user, type: realWord, isActive: realWord === 'active' }));
                 router.push('/register')
               }
-              if (realWord === 'active' || realWord === "inactive" && userFromLs) {
+              if ((realWord === 'active' || realWord === "inactive") && userFromLs) {
                 router.push('/dashboard');
               }
 
@@ -61,7 +62,7 @@ const scan = () => {
                 const before = Number(user.points);
                 dispatch((addResult(realWord)));
                 dispatch(setUser({ ...user, points: before  + value }));
-                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userPoints', JSON.stringify(user));
                 router.push('/dashboard');
               }
               if (realWord === "-500") {
@@ -70,7 +71,7 @@ const scan = () => {
 
                 dispatch((addResult(realWord)));
                 dispatch(setUser({ ...user, points: before  - value }));
-                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userPoints', JSON.stringify(user));
                 router.push('/dashboard');
               }
             }

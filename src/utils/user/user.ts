@@ -5,6 +5,8 @@ const userInfo= createSlice({
     initialState: {
         user: {
             name: "",
+            phone:"",
+            gender:"",
             points: 0,
             hasScanned: false,
             isActive: false,
