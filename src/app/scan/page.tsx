@@ -20,13 +20,32 @@ const scan = () => {
   console.log("cypherText", text.toString());
   const decrypt = AES.decrypt(text, '123');
   console.log("decrypted", decrypt.toString(CryptoJS.enc.Utf8));
+  const updateUser= async (id:string,token:string, points:any)=>{
+    const response= await fetch(`http://localhost:3005/api/users/updateUser/${id}`,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({points: points})
+    });
+    if(response.ok){
+      const data= await response.json();
+      console.log(data);
+      // dispatch(setUser({...user, points: user.points + data.points}));
+    }
+    else{
+      console.log('error', response.status)
+    }
+  }
   useEffect(() => {
     const userls = JSON.parse(localStorage.getItem('user') as string);
     console.log('userFromLs', userFromLs);
     setUserFromLs(userls);
     console.log(userFromLs);
   }, []);
- 
+
+
   return (
     <div className=''>
       <div className='py-5 my-6 m-auto text-center'>
@@ -49,7 +68,7 @@ const scan = () => {
               if ((realWord === "active" || realWord === "inactive") && !userFromLs) {
                 dispatch(addResult(result[0].rawValue));
                 dispatch(setUser({ ...user, type: realWord, isActive: realWord === 'active' }));
-                localStorage.setItem('user', JSON.stringify({...user, type: realWord, isActive: realWord === 'active' }));
+                localStorage.setItem('user', JSON.stringify({ ...user, type: realWord, isActive: realWord === 'active' }));
                 router.push('/register')
               }
               if ((realWord === 'active' || realWord === "inactive") && userFromLs) {
@@ -58,19 +77,27 @@ const scan = () => {
 
               if (realWord === "500") {
                 // router.push('/dashboard')
+
                 const value = Number(realWord);
                 const before = Number(user.points);
-                dispatch((addResult(realWord)));
-                dispatch(setUser({ ...user, points: before  + value }));
-                localStorage.setItem('userPoints', JSON.stringify(user));
-                router.push('/dashboard');
+                const userls = JSON.parse(localStorage.getItem('user') as any);
+                console.log('userls', userls.user.points);
+                if (userls) {
+                  userls.user.points+=value ;
+                  dispatch((addResult(realWord)));
+                  dispatch(setUser({ ...user, points: userls.user.points }));
+                  localStorage.setItem('user', JSON.stringify(userls));
+                  updateUser(userls.user._id, userls.token, userls.user.points);
+                  router.push('/dashboard');
+                }
+
               }
               if (realWord === "-500") {
                 const value = Number(realWord);
                 const before = Number(user.points);
 
                 dispatch((addResult(realWord)));
-                dispatch(setUser({ ...user, points: before  - value }));
+                dispatch(setUser({ ...user, points: before - value }));
                 localStorage.setItem('userPoints', JSON.stringify(user));
                 router.push('/dashboard');
               }
