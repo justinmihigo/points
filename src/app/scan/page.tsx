@@ -21,7 +21,7 @@ const scan = () => {
   const decrypt = AES.decrypt(text, '123');
   console.log("decrypted", decrypt.toString(CryptoJS.enc.Utf8));
   const updateUser= async (id:string,token:string, points:any)=>{
-    const response= await fetch(`http://localhost:3005/api/users/updateUser/${id}`,{
+    const response= await fetch(`https://points-be.onrender.com/api/users/updateUser/${id}`,{
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -75,16 +75,16 @@ const scan = () => {
                 router.push('/dashboard');
               }
 
-              if (realWord === "500") {
+              if (realWord === "500" || realWord === "-500") {
                 // router.push('/dashboard')
 
-                const value = Number(realWord);
+                const value = Number(`${realWord==="500"?'500':'-500'}`);
                 const before = Number(user.points);
                 const userls = JSON.parse(localStorage.getItem('user') as any);
                 console.log('userls', userls.user.points);
                 if (userls) {
                   userls.user.points+=value ;
-                  dispatch((addResult(realWord)));
+                  dispatch((addResult(`${realWord==="500"?'500':'-500'}`)));
                   dispatch(setUser({ ...user, points: userls.user.points }));
                   localStorage.setItem('user', JSON.stringify(userls));
                   updateUser(userls.user._id, userls.token, userls.user.points);
