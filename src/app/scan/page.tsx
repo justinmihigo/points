@@ -62,7 +62,7 @@ const scan = () => {
                 const before = Number(user.points);
                 dispatch((addResult(realWord)));
                 dispatch(setUser({ ...user, points: before  + value }));
-                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userPoints', JSON.stringify(user));
                 router.push('/dashboard');
               }
               if (realWord === "-500") {
@@ -71,7 +71,7 @@ const scan = () => {
 
                 dispatch((addResult(realWord)));
                 dispatch(setUser({ ...user, points: before  - value }));
-                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userPoints', JSON.stringify(user));
                 router.push('/dashboard');
               }
             }

@@ -10,53 +10,58 @@ import { leaderBoardData } from './data'
 import { setUser } from '@/utils/user/user'
 
 const Dashboard = () => {
-    const [userInfo, setUserInfo] = useState<Record<string, string>>();
-    useEffect(() => {
-        const authtoken = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user')!);
-        if (authtoken && user) {
-            const userId = user.user._id;
-            setUserInfo({ token: JSON.parse(authtoken), userId });
-        }
-    }, []);
-    const getUser= async (id:string, token:string)=>{
-        const response = await fetch(`http://localhost:3005/api/users/getuser/${id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if (response.ok) {
-            const data = await response.json();
-            dispatch(setUser({...user, name: data.user.name, phone: data.user.phone, data: data.user.points}));
-            console.log(data);
-            return data;
-        } else {
-            console.log('Error fetching user');
-        }
-    }
-    useEffect(()=>{
-        if (userInfo) {
-             getUser(userInfo.userId, userInfo.token);
-            
-        }
-    }, [userInfo]);
-    const user = useSelector((state: RootState) => state.userInfo.user);
+    const router = useRouter();
+    let user = useSelector((state: RootState) => state.userInfo.user);
     const result = useSelector((state: RootState) => state.scanResults.results);
-    const dispatch = useDispatch()
-    console.log('result:  ', result);
-    console.log(result);
+    const dispatch = useDispatch();
+    const [userInfo, setUserInfo] = useState<Record<string, string>>();
+
     const display = () => {
         if (result.includes('500')) {
             return (<div>
                 <ReactConfetti tweenDuration={1000} recycle={false} />
             </div>)
         }
-
-
     }
-    const router = useRouter();
+
+    const getUser= async (id:string, token:any)=>{
+        console.log(token?.token)
+        const response = await fetch(`http://localhost:3005/api/users/getuser/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token.token}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            dispatch(setUser({...user, name: data.fullname, phone: data.phone, data: data.points }));
+            console.log(data);
+            return data;
+        } else {
+            console.log(response)
+            console.log('Error fetching user');
+        }
+    }
+    useEffect(() => {
+        const authtoken = localStorage.getItem('token');
+        const users = JSON.parse(localStorage.getItem('user')!);
+        if (authtoken && users) {
+            const userId = users.user._id;
+            console.log(authtoken, userId);
+            setUserInfo({ token: JSON.parse(authtoken), userId });
+        }
+    }, []);
+
+    useEffect(()=>{
+        console.log(userInfo);
+        console.log(userInfo?.userId, userInfo?.token);
+        if (userInfo) {
+            getUser(userInfo.userId, userInfo.token);
+        }
+    }, [userInfo]);
+    
     return (
         <>
             <div>

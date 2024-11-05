@@ -42,7 +42,7 @@ const Register = () => {
             console.log(data);
             if (data) {
                 console.log('User saved successfully')
-                dispatch(setUser({ ...user, name: data.user.fullname, phone: data.user.phone, gender: data.user.gender }));
+                dispatch(setUser({ ...user, name: data.user.fullname, phone: data.user.phone, gender: data.user.gender, status: data.user.type }));
                 localStorage.setItem('user', JSON.stringify(data));
                 localStorage.setItem('token', JSON.stringify({ token: data.token }))
                 router.push('/dashboard');

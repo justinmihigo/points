@@ -6,7 +6,7 @@ import { leaderBoardData } from '../data'
 const Leaderboard = () => {
     return (
         <>
-        <Navbar />
+        <Navbar name={''} />
             <div className='m-10'>
                 
 
