@@ -5,7 +5,7 @@ import ReduxProvider from "./StoreProvider";
 export default function Home() {
  
   const fetchUser = async () => {
-    const user = await fetch('http://localhost:3005/api/users/getToken', {
+    const user = await fetch('https://points-be.onrender.com/api/users/getToken', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -26,7 +26,7 @@ const Dashboard = () => {
 
     const getUser= async (id:string, token:any)=>{
         console.log(token?.token)
-        const response = await fetch(`http://localhost:3005/api/users/getuser/${id}`, {
+        const response = await fetch(`https://points-be.onrender.com/api/users/getuser/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
