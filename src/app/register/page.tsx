@@ -37,7 +37,7 @@ const Register = () => {
         if (phoneRef.current?.value && fullnameRef.current?.value) {
             dispatch(setUser({ name: fullnameRef.current.value, phone: phoneRef.current.value, gender: genderRef.current.value, type: user.type, hasScanned: true }));
             localStorage.setItem('user', JSON.stringify({ name: fullnameRef.current.value, phone: phoneRef.current.value, gender: genderRef.current.value, type: user.type, hasScanned: true }));
-            const response = await handleSaveUser({ fullname: fullnameRef.current.value, phone: phoneRef.current.value, type: user.type, hasScanned: true });
+            const response = await handleSaveUser({ fullname: fullnameRef.current.value, phone: phoneRef.current.value, status: user.type, hasScanned: true });
             const data = await response.json();
             console.log(data);
             if (data) {
