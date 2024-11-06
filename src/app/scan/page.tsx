@@ -84,7 +84,7 @@ const scan = () => {
                 console.log('userls', userls.user.points);
                 if (userls) {
                   userls.user.points+=value ;
-                  dispatch((addResult(`${realWord==="500"?'500':'-500'}`)));
+                  dispatch((addResult(realWord)));
                   dispatch(setUser({ ...user, points: userls.user.points }));
                   localStorage.setItem('user', JSON.stringify(userls));
                   updateUser(userls.user._id, userls.token, userls.user.points);
