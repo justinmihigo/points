@@ -78,9 +78,9 @@ const Register = () => {
                     <div>
                         {warning && <p className='text-red-500'>{warning}</p>}
                     </div>
-                    <div className='flex flex-row justify-center items-center text-center bg-secondary text-primary rounded-full px-3 py-4 my-5'>
-                        <button onClick={handleSubmit}>Register</button>
-                    </div>
+                    <button onClick={handleSubmit} className='flex flex-row justify-center items-center text-center bg-secondary text-primary rounded-full px-3 py-4 my-5'>
+                        Register
+                    </button>
 
 
                 </div>
