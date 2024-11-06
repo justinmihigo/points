@@ -78,9 +78,10 @@ const Dashboard = () => {
             <div>
                 <Navbar name={userInfo?.user.fullname || ''} />
                 <div className='m-10'>
-
-                    {display()}
-
+                    <div>
+                        {display()}
+                    </div>
+                    
                     <div>
                         <h1 className='text-[25px] font-bold'>Dashboard</h1>
                         <h1 className=''>Hi, {userInfo?.user.fullname}</h1>
