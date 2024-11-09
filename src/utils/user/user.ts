@@ -6,9 +6,11 @@ const userInfo= createSlice({
         user: {
             name: "",
             phone:"",
+            email:"",
             gender:"",
             points: 0,
-            hasScanned: false,
+            favoriteActivity:'',
+            hasScanned: [],
             isActive: false,
             type:"inActive"
         }

@@ -1,27 +1,26 @@
 'use client'
 import Navbar from '@/components/Navbar'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/utils/store'
 import { setUser } from '@/utils/user/user'
+import { PhoneInput } from 'react-international-phone'
+import 'react-international-phone/style.css'
 const Register = () => {
-    const phoneRef = useRef<HTMLInputElement>(null);
+    const phoneRef = useRef<any>(null);
     const fullnameRef = useRef<HTMLInputElement>(null);
     const genderRef = useRef<any>(null);
+    const activityRef = useRef<any>(null);
+    const emailRef = useRef<any>(null);
     const [warning, setWarning] = useState<string>();
 
     const user = useSelector((state: RootState) => state.userInfo.user);
     console.log(user);
     const dispatch = useDispatch();
-    // const handleName = (event: any) => {
-    //     setFullname(event.target?.value);
-    // }
-    // const handlePhone = (event: any) => {
-    //     setPhone(event.target.value);
-    // }
+
     const handleSaveUser = async (user: any) => {
-        const form = await fetch('https://points-be.onrender.com/api/users/register', {
+        const form = await fetch('http://localhost:3005/api/users/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,16 +32,50 @@ const Register = () => {
     const handleSubmit = async (event: any) => {
         console.log(phoneRef.current?.value)
         event.preventDefault();
-        console.log(genderRef.current?.value)
-        if (phoneRef.current?.value && fullnameRef.current?.value) {
-            dispatch(setUser({ name: fullnameRef.current.value, phone: phoneRef.current.value, gender: genderRef.current.value, type: user.type, hasScanned: true }));
-            localStorage.setItem('user', JSON.stringify({ name: fullnameRef.current.value, phone: phoneRef.current.value, gender: genderRef.current.value, type: user.type, hasScanned: true }));
-            const response = await handleSaveUser({ fullname: fullnameRef.current.value, phone: phoneRef.current.value, status: user.type, hasScanned: true });
+        console.log(genderRef.current?.value, activityRef.current.value, emailRef.current.value)
+        if (phoneRef.current?.value && fullnameRef.current?.value && activityRef.current?.value) {
+            dispatch(setUser(
+                {
+                    name: fullnameRef.current.value,
+                    phone: phoneRef.current.value,
+                    favoriteActivity: activityRef.current.value,
+                    email: emailRef.current.value,
+                    gender: genderRef.current.value,
+                    type: user.type, hasScanned: user.hasScanned,
+                    points: user.points,
+                }));
+            localStorage.setItem('user', JSON.stringify(
+                {
+                    name: fullnameRef.current.value,
+                    phone: phoneRef.current.value,
+                    favoriteActivity: activityRef.current.value,
+                    email: emailRef.current.value,
+                    gender: genderRef.current.value,
+                    type: user.type, hasScanned: user.hasScanned,
+                    points: user.points
+                }));
+            const response = await handleSaveUser({
+                fullname: fullnameRef.current.value,
+                phone: phoneRef.current.value,
+                gender: genderRef.current.value,
+                favoriteActivity: activityRef.current.value,
+                email: emailRef.current.value,
+                status: user.type,
+                hasScanned: user.hasScanned,
+                points: user.points
+            });
             const data = await response.json();
             console.log(data);
             if (data) {
                 console.log('User saved successfully')
-                dispatch(setUser({ ...user, name: data.user.fullname, phone: data.user.phone, gender: data.user.gender, status: data.user.type }));
+                dispatch(setUser(
+                    {
+                        ...user,
+                        name: data.user.fullname,
+                        phone: data.user.phone,
+                        gender: data.user.gender,
+                        status: data.user.type
+                    }));
                 localStorage.setItem('user', JSON.stringify(data));
                 localStorage.setItem('token', JSON.stringify({ token: data.token }))
                 router.push('/dashboard');
@@ -55,7 +88,12 @@ const Register = () => {
     }
 
     const router = useRouter();
-
+    useEffect(() => {
+        const userFromLs = JSON.parse(localStorage.getItem('user')!);
+        if (userFromLs.token) {
+            router.push('/dashboard');
+        }
+    }, []);
 
     return (
         <>
@@ -64,17 +102,31 @@ const Register = () => {
                 <h1 className='text-xl font-bold py-5 text-center'>Register</h1>
                 {/* <form action=""> */}
                 <div className='flex flex-col justify-center pt-[50px] gap-y-5 w-[80%] m-auto'>
-                    <label htmlFor="name"> Full name </label>
+                    <label htmlFor="name"> Full name <span className='text-red-400'>*</span></label>
                     <input ref={fullnameRef} className='border-2 rounded-xl p-2 py-3 w-full' type="text" id='name' name='name' placeholder="e.g John Doe" />
 
-                    <label htmlFor="name"> Phone Number </label>
-                    <input ref={phoneRef} className='border-2 rounded-xl p-2 py-3 w-full' type="phone" placeholder="phone number e.g 0782923093" />
-                    <label htmlFor="geender">Gender</label>
+                    <label htmlFor="name"> Email </label>
+                    <input ref={emailRef} className='border-2 rounded-xl p-2 py-3 w-full' type="email" id='name' name='name' placeholder="e.g John Doe" />
+
+                    <label htmlFor="name"> Phone Number <span className='text-red-400'>*</span></label>
+                    <PhoneInput ref={phoneRef} defaultCountry='ke' inputClassName='w-full h-full' inputStyle={{ border: "none" }} className='border-2 rounded-xl p-2 py-3 w-full' placeholder="Enter phone number" />
+
+                    <label htmlFor="gender">Gender <span className='text-red-400'>*</span></label>
                     <select ref={genderRef} className='border-2 rounded-xl p-2 py-3 w-full pr-3' id="gender" name="gender">
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
                     </select>
+                    <label htmlFor="favactivity"> Favorite Activity <span className='text-red-400'>*</span></label>
+                    <select ref={activityRef} className='border-2 rounded-xl p-2 py-3 w-full pr-3' name='favactivity' id='favactivity'>
+                        <option value=''>Select</option>
+                        <option value="BeatStrike">Cardiovascular endurance, Agility and Power</option>
+                        <option value="BeatGroove">Aerobic Base, Coordination and rhythm</option>
+                        <option value="BeatStrong">Muscle strength, endurance and functional movement</option>
+                        <option value="BeatFlow">Flexibility, mobility, balance, mind- body connection</option>
+                        <option value="Inactive">Here to have fun</option>
+                    </select>
+
                     <div>
                         {warning && <p className='text-red-500'>{warning}</p>}
                     </div>
