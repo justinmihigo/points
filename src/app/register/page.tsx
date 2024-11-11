@@ -7,12 +7,14 @@ import { RootState } from '@/utils/store'
 import { setUser } from '@/utils/user/user'
 import { PhoneInput } from 'react-international-phone'
 import 'react-international-phone/style.css'
+import Link from 'next/link'
 const Register = () => {
     const phoneRef = useRef<any>(null);
     const fullnameRef = useRef<HTMLInputElement>(null);
     const genderRef = useRef<any>(null);
     const activityRef = useRef<any>(null);
     const emailRef = useRef<any>(null);
+    const [checked, setChecked]= useState<any>();
     const [warning, setWarning] = useState<string>();
 
     const user = useSelector((state: RootState) => state.userInfo.user);
@@ -30,9 +32,13 @@ const Register = () => {
         return form;
     }
     const handleSubmit = async (event: any) => {
-        console.log(phoneRef.current?.value)
+        console.log(phoneRef.current?.value, checked)
         event.preventDefault();
         console.log(genderRef.current?.value, activityRef.current.value, emailRef.current.value)
+        if(!checked){
+            setWarning('Please agree to Terms and Conditions');
+            return;
+        }
         if (phoneRef.current?.value && fullnameRef.current?.value && activityRef.current?.value) {
             dispatch(setUser(
                 {
@@ -85,12 +91,13 @@ const Register = () => {
         else {
             setWarning('Please fill in all fields');
         }
+        
     }
 
     const router = useRouter();
     useEffect(() => {
         const userFromLs = JSON.parse(localStorage.getItem('user')!);
-        if (userFromLs.token) {
+        if (userFromLs?.token!) {
             router.push('/dashboard');
         }
     }, []);
@@ -124,13 +131,16 @@ const Register = () => {
                         <option value="BeatGroove">Aerobic Base, Coordination and rhythm</option>
                         <option value="BeatStrong">Muscle strength, endurance and functional movement</option>
                         <option value="BeatFlow">Flexibility, mobility, balance, mind- body connection</option>
-                        <option value="Inactive">Here to have fun</option>
+                        <option value="Inactive">Here for the vibes!</option>
                     </select>
-
+                    <div className='flex flex-row gap-x-4 items-center'>
+                        <input type="checkbox" onChange={(event)=>setChecked(event.target.value)} id='terms' name='terms' className='w-5 h-5' />
+                        <label htmlFor='terms'>I accept <Link href='/terms' className='text-blue-500 underline'>Terms and conditions</Link></label>
+                    </div>
                     <div>
                         {warning && <p className='text-red-500'>{warning}</p>}
                     </div>
-                    <button onClick={handleSubmit} className='flex flex-row justify-center items-center text-center bg-secondary text-primary rounded-full px-3 py-4 my-5'>
+                    <button onClick={handleSubmit} className={`flex flex-row justify-center items-center text-center bg-secondary text-primary rounded-full px-3 py-4 my-5 ${!checked?'opacity-50 cursor-not-allowed':''}`}>
                         Register
                     </button>
 
