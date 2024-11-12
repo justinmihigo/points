@@ -1,14 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const scanResults= createSlice(
+const scanResults = createSlice(
     {
         name: "scanResults",
         initialState: {
-            results: "",
+            results:
+            {
+                results: 0,
+                message: "",
+            }
         },
         reducers: {
             addResult: (state, action) => {
-                state.results= action.payload;
+                state.results = action.payload;
             },
         },
     }
