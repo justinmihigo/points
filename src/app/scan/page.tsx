@@ -24,7 +24,7 @@ const scan = () => {
   // console.log("decrypted", decrypt.toString(CryptoJS.enc.Utf8));
 
   const updateUser = async (id: string, token: string, points: any, hasScanned: any) => {
-    const response = await fetch(`http://localhost:3005/api/users/updateUser/${id}`, {
+    const response = await fetch(`https://points-be.onrender.com/api/users/updateUser/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const scan = () => {
   }
 
   const getQrResult = async (id: string) => {
-    const response = await fetch(`http://localhost:3005/api/qrs/getQr/${id}`);
+    const response = await fetch(`https://points-be.onrender.com/api/qrs/getQr/${id}`);
     if (response.ok) {
       const data = await response.json();
       console.log('data', data.qrcode);

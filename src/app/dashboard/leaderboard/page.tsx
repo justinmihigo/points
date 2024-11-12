@@ -8,7 +8,7 @@ const Leaderboard = () => {
     const [users, setUsers]= useState<any>([]);
     const getUsers = async () => {
         try {
-            const response = await fetch('http://localhost:3005/api/users/getUsers');
+            const response = await fetch('https://points-be.onrender.com/api/users/getUsers');
             if (response.ok) {
                 const data = await response.json();
                 setUsers(data.user);
