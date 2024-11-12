@@ -22,7 +22,7 @@ const Register = () => {
     const dispatch = useDispatch();
 
     const handleSaveUser = async (user: any) => {
-        const form = await fetch('http://localhost:3005/api/users/register', {
+        const form = await fetch('https://points-be.onrender.com/api/users/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
