@@ -102,9 +102,11 @@ const Register = () => {
             router.push('/dashboard');
         }
     }, []);
+   useEffect(()=>{
     window.onbeforeunload=()=>{
         return "By reloading this page you might loose your points are sure you want to relaod"
     }
+   },[])
     return (
         <>
             <Navbar />
