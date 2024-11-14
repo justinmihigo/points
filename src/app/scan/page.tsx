@@ -159,8 +159,9 @@ const scan = () => {
     console.log('userFromLs', userFromLs);
     setUserFromLs(userls);
   }, []);
-  const id = searchParams.get('id');
+  
   const handleParams = async () => {
+    const id = searchParams.get('id');
     if (id) {
       await handleScan(id);
       return;
@@ -181,9 +182,9 @@ const scan = () => {
       <div className='flex flex-row justify-center'>
         <div className='w-[300px] h-[300px]'>
 
-          {!id && (<Scanner
+          {<Scanner
             components={{ audio: false, }}
-            onScan={handleScan} />)}
+            onScan={handleScan} />}
 
         </div>
       </div>
