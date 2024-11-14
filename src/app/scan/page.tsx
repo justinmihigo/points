@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Scanner } from "@yudiel/react-qr-scanner"
 import { useDispatch, useSelector } from 'react-redux';
 import { addResult } from '@/utils/scan/scanResSlice';
@@ -8,23 +8,16 @@ import { setUser } from '@/utils/user/user';
 import CryptoJS, { AES } from "crypto-js"
 import { RootState } from '@/utils/store';
 const scan = () => {
-  // const secret_key= process.env.SECRET || '';
-  // console.log("secret_key",secret_key);
+  const ENV_PRODUCTION= process.env.ENV_PRODUCTION || 'https://points-be.onrender.com';
   const router = useRouter();
-  const [userFromLs, setUserFromLs] = useState<any>({});
-  // const [message, setMessage] = useState<any>(null);
+  const searchParams = useSearchParams();
+  const [userFromLs, setUserFromLs] = useState<any>();
   const [qrResult, setQrResult] = useState(null);
-  console.log(userFromLs)
   const user = useSelector((state: RootState) => state.userInfo.user);
   const results = useSelector((state: RootState) => state.scanResults.results);
   const dispatch = useDispatch();
-  // const text = AES.encrypt('inactive', '123');
-  // console.log("cypherText", text.toString());
-  // const decrypt = AES.decrypt(text, '123');
-  // console.log("decrypted", decrypt.toString(CryptoJS.enc.Utf8));
-
   const updateUser = async (id: string, token: string, points: any, hasScanned: any) => {
-    const response = await fetch(`https://points-be.onrender.com/api/users/updateUser/${id}`, {
+    const response = await fetch(`${ENV_PRODUCTION}/api/users/updateUser/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +36,7 @@ const scan = () => {
   }
 
   const getQrResult = async (id: string) => {
-    const response = await fetch(`https://points-be.onrender.com/api/qrs/getQr/${id}`);
+    const response = await fetch(`${ENV_PRODUCTION}/api/qrs/getQr/${id}`);
     if (response.ok) {
       const data = await response.json();
       console.log('data', data.qrcode);
@@ -59,6 +52,7 @@ const scan = () => {
     console.log('register', result);
 
     if (!userFromLs && result && result.type === 'registration') {
+      console.log('registering');
       dispatch(addResult({ result: result.points, message: "Thanks for the registration" }));
       dispatch(setUser({ ...user, type: result.dedicated === 'active' ? 'active' : 'inactive', isActive: result.dedicated === 'active', hasScanned: [result.name], points: result.points }));
       localStorage.setItem('user', JSON.stringify({ ...user, type: result.dedicated === 'active' ? 'active' : 'inactive', isActive: result.dedicated === 'active', points: result.points, hasScanned: [result.name] }));
@@ -66,8 +60,8 @@ const scan = () => {
       router.push('/register')
       return;
     }
-    if(userFromLs && result.type==='registration') {
-      dispatch(addResult({results:'', message:"already registered"}))
+    if (userFromLs && result.type === 'registration') {
+      dispatch(addResult({ results: '', message: "already registered" }))
       router.push('/dashboard');
       return;
     }
@@ -80,28 +74,43 @@ const scan = () => {
       const before = Number(userls.user.points);
       console.log('userls', userls.user.points);
       console.log('user', userls.user.hasScanned.includes(data.name))
+      console.log("statuses", userls.user.status, data.dedicated)
+      if (userls.user.status !== data.dedicated && data.dedicated !== 'all') {
+        dispatch((addResult({ results: '', message: 'You are not allowed to scan this' })));
+        router.push('/dashboard');
+        return;
+      }
       if (userls && !userls.user.hasScanned.includes(data.name)) {
         userls.user.points += value;
         userls.user.hasScanned.push(data.name);
-        let message='';
-        switch(data.name){
-        case 'BeatStrike': 
-        message=`Feel the Pulse! Your heart is racing, your strength is rising. BeatStrike just pushed you one step closer to peak power!`
-        break;
-        case 'BeatGroove':
-        message=`Feel that groove? It's all yours! 1100 points scored for mastering the BeatGroove. Keep moving to the beat!`
-        break;
-        case 'BeatStrong':
-        message=`Strength unleashed!  You're building muscle and resilience—1300 points added. Keep up the power!`
-        break;
-        case 'BeatFlow':
-        message=`You're in perfect harmony! Flexibility, balance, and mind-body alignment—1000 points well-earned. Keep that flow going!`
-        break;
-        case 'Penalty':
-        message=`Uh-oh! Looks like you missed a beat or two, but there's always a comeback!`
-        break;
-        default:
-        message=`Hooray!`
+        let message = '';
+        switch (data.name) {
+          case 'BeatStrike':
+            message = `Feel the Pulse! ⚡️ Your heart is racing, your strength is rising. BeatStrike just pushed you one step closer to peak power!`
+            break;
+          case 'BeatGroove':
+            message = `Feel that groove? It's all yours! 1100 points scored for mastering the BeatGroove. Keep moving to the beat!`
+            break;
+          case 'BeatStrong':
+            message = `Strength unleashed! 💪 You're building muscle and resilience—1300 points added. Keep up the power!`
+            break;
+          case 'BeatFlow':
+            message = `You're in perfect harmony! 🌱 Flexibility, balance, and mind-body alignment—1000 points well-earned. Keep that flow going!`
+            break;
+          case 'SquatKing':
+          case 'SquatQueen':
+            message = `You've ruled the 🏆 squat throne! Power, endurance, and grit - King of Squats has crowned you a true champion!`
+            break;
+          case 'Penalty':
+          case 'Penalty1':
+          case 'Penalty2':
+          case 'Penalty3':
+          case 'Penalty4':
+          case 'Penalty5':
+            message = `Uh-oh! Looks like you missed a beat or two, but there's always a comeback!`
+            break;
+          default:
+            message = `Hooray!`
         }
         console.log('message', message);
         dispatch((addResult({ results: data.points, message: message })));
@@ -122,15 +131,26 @@ const scan = () => {
 
   }
   const handleScan = async (result: any) => {
-    if (result[0].rawValue.length === 24) {
-      // Wait for the qrResult to be updated
-      const fetchedData = await getQrResult(result[0].rawValue);
+    console.log('result', result);
+    let res='';
+    if(Array.isArray(result) && result[0].rawValue.length>0 && result[0].rawValue.includes('http')){
+        res= result[0].rawValue.slice(-24);
+        console.log(res);
+    }
+    else{
+      res= result;
+    }
+    
+    if (res) {
+      const fetchedData = await getQrResult(res);
       console.log(fetchedData);
       if (fetchedData && fetchedData.type === 'registration') {
         handleRegistration(fetchedData);
+        return;
       }
-      else if (fetchedData) {
+      else {
         handlePoints(fetchedData);
+        return;
       }
     }
   };
@@ -138,8 +158,17 @@ const scan = () => {
     const userls = JSON.parse(localStorage.getItem('user') as string);
     console.log('userFromLs', userFromLs);
     setUserFromLs(userls);
-    console.log(userFromLs);
   }, []);
+  const id = searchParams.get('id');
+  const handleParams = async () => {
+    if (id) {
+      await handleScan(id);
+      return;
+    }
+  }
+  useEffect(() => {
+    handleParams();
+  }, [])
 
 
   return (
@@ -152,68 +181,9 @@ const scan = () => {
       <div className='flex flex-row justify-center'>
         <div className='w-[300px] h-[300px]'>
 
-          <Scanner
+          {!id && (<Scanner
             components={{ audio: false, }}
-            onScan={handleScan
-              // (result) => {
-              //   console.log('result', result);
-              //   if(result[0].rawValue.length==24){
-              //    await getQrResult(result[0].rawValue);
-              //     if(qrResult){
-              //       setTimeout(()=>{
-              //         handleRegistration(qrResult);
-              //       }, 100);
-
-              // }
-
-              // router.push('/dashboard');
-              // return;
-              // }
-              //   const decryptedResult = AES.decrypt(result[0].rawValue, '123');
-              //   const realWord = decryptedResult.toString(CryptoJS.enc.Utf8);
-              //   setResult(realWord);
-              //   console.log('realWord', realWord);
-              //   console.log('user', userFromLs);
-              //   if ((realWord === "active" || realWord === "inactive") && !userFromLs) {
-              //     dispatch(addResult(result[0].rawValue));
-              //     dispatch(setUser({ ...user, type: realWord, isActive: realWord === 'active' }));
-              //     localStorage.setItem('user', JSON.stringify({ ...user, type: realWord, isActive: realWord === 'active' }));
-              //     router.push('/register')
-              //   }
-              //   if ((realWord === 'active' || realWord === "inactive") && userFromLs) {
-              //     router.push('/dashboard');
-              // }
-
-              //   if (realWord === "500" || realWord === "-500") {
-              //     // router.push('/dashboard')
-
-              // const value = Number(`${realWord==="500"?'500':'-500'}`);
-              // const before = Number(user.points);
-              // const userls = JSON.parse(localStorage.getItem('user') as any);
-              // console.log('userls', userls.user.points);
-              // if (userls) {
-              //   userls.user.points+=value ;
-              //   dispatch((addResult(realWord)));
-              //   dispatch(setUser({ ...user, points: userls.user.points }));
-              //   localStorage.setItem('user', JSON.stringify(userls));
-              //   updateUser(userls.user._id, userls.token, userls.user.points);
-              //   router.push('/dashboard');
-              //     }
-
-              //   }
-              //   if (realWord === "-500") {
-              //     const value = Number(realWord);
-              //     const before = Number(user.points);
-
-              //     dispatch((addResult(realWord)));
-              //     dispatch(setUser({ ...user, points: before - value }));
-              //     localStorage.setItem('userPoints', JSON.stringify(user));
-              //     router.push('/dashboard');
-              //   }
-              // }
-            } />
-
-
+            onScan={handleScan} />)}
 
         </div>
       </div>

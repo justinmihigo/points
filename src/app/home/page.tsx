@@ -33,11 +33,13 @@ const Home = () => {
       <Navbar />
       <div className='flex flex-row justify-center items center'>
         <div className='flex flex-col gap-y-8'>
-          <h1 className='font-bold text-lg text-[2rem] text-secondary' onClick={()=>dispatch(addResult('500'))}>Welcome To our E-Scan</h1>
-          <p className='text-center'>Get enrolled by scanning the Qr code only</p>
-          <Link href={'/scan'} className='flex flex-row justify-center mt-[100px] '>
-            <p className='h-[200px] w-[200px] p-4 flex flex-col font-bold justify-center items-center rounded-full bg-[#C8D9E6] text-center text-lg text-secondary' >Scan QR Code</p>
+          <h1 className='font-bold text-lg text-[2rem] text-secondary'>Welcome to the FitBeat 2.0 Concert</h1>
+          <p className='text-center'>Get enrolled by scanning the Qr code</p>
+          <Link href={'/scan'} className='flex flex-row justify-center mt-[90px] '>
+            <p className='h-[200px] w-[200px] p-4 flex flex-col font-bold justify-center items-center rounded-full bg-[#C8D9E6] text-center text-lg text-secondary' >Scan and Earn</p>
           </Link>
+          <h1 className='font-bold text-black text-lg text-[2rem] text-secondary py-5 text-center'>Double the exprience</h1>
+
         </div>
       </div>
     </div >

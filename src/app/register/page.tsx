@@ -9,6 +9,7 @@ import { PhoneInput } from 'react-international-phone'
 import 'react-international-phone/style.css'
 import Link from 'next/link'
 const Register = () => {
+    const ENV_PRODUCTION= process.env.ENV_PRODUCTION || 'https://points-be.onrender.com';
     const phoneRef = useRef<any>(null);
     const fullnameRef = useRef<HTMLInputElement>(null);
     const genderRef = useRef<any>(null);
@@ -22,7 +23,7 @@ const Register = () => {
     const dispatch = useDispatch();
 
     const handleSaveUser = async (user: any) => {
-        const form = await fetch('https://points-be.onrender.com/api/users/register', {
+        const form = await fetch(`${ENV_PRODUCTION}/api/users/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,11 +102,14 @@ const Register = () => {
             router.push('/dashboard');
         }
     }, []);
-
+    window.onbeforeunload=()=>{
+        return "By reloading this page you might loose your points are sure you want to relaod"
+    }
     return (
         <>
             <Navbar />
             <div className='w-[100%] my-5'>
+                <h2 className='font-bold  text-center text-xl'>Welcome to the FitBeat 2.0 Concert</h2>
                 <h1 className='text-xl font-bold py-5 text-center'>Register</h1>
                 {/* <form action=""> */}
                 <div className='flex flex-col justify-center pt-[50px] gap-y-5 w-[80%] m-auto'>

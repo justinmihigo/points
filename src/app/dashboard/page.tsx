@@ -10,8 +10,8 @@ import { ToastContainer, ToastTransition, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { setUser } from '@/utils/user/user'
 import CountUp from 'react-countup'
-
 const Dashboard = () => {
+    const ENV_PRODUCTION= process.env.ENV_PRODUCTION || 'https://points-be.onrender.com';
     const router = useRouter();
     let user = useSelector((state: RootState) => state.userInfo.user);
     const result = useSelector((state: RootState) => state.scanResults.results);
@@ -24,7 +24,7 @@ const Dashboard = () => {
     const alert = () => {
             toast(result.message, {
                 position: "top-center",
-                autoClose: 4000,
+                autoClose: 8000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -44,7 +44,7 @@ const Dashboard = () => {
     }
     const getUsers = async () => {
         try {
-            const response = await fetch('https://points-be.onrender.com/api/users/top10');
+            const response = await fetch(`${ENV_PRODUCTION}/api/users/top10`);
             if (response.ok) {
                 const data = await response.json();
                 setUsers(data);
@@ -60,41 +60,7 @@ const Dashboard = () => {
 
     }
     
-    // const getUser= async (id:string, token:any)=>{
-    //     console.log(token?.token)
-    //     const response = await fetch(`https://points-be.onrender.com/api/users/getuser/${id}`, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': `Bearer ${token.token}`
-    //         }
-    //     });
-    //     if (response.ok) {
-    //         const data = await response.json();
-    //         dispatch(setUser({...user, name: data.fullname, phone: data.phone, data: data.points }));
-    //         return data;
-    //     } else {
-    //         console.log(response)
-    //         console.log('Error fetching user');
-    //     }
-    // }
-    // useEffect(() => {
-    //     const authtoken = localStorage.getItem('token');
-    //     const users = JSON.parse(localStorage.getItem('user')!);
-    //     if (authtoken && users) {
-    //         const userId = users.user._id;
-    //         console.log(authtoken, userId);
-    //         setUserInfo({ token: JSON.parse(authtoken), userId });
-    //     }
-    // }, []);
-
-    // useEffect(()=>{
-    //     console.log(userInfo);
-    //     console.log(userInfo?.userId, userInfo?.token);
-    //     if (userInfo) {
-    //         getUser(userInfo.userId, userInfo.token);
-    //     }
-    // }, [userInfo]);
+    
     const getUserInfo = () => {
         const users = JSON.parse(localStorage.getItem('user')!);
         if (users) {
@@ -122,7 +88,7 @@ const Dashboard = () => {
         <>
             <ToastContainer/>
             <div>
-                <Navbar name={userInfo?.user.fullname || ''} />
+                <Navbar name={userInfo?.user?.fullname || ''} />
                 <div className='m-10'>
                     <div>
                         {display()}

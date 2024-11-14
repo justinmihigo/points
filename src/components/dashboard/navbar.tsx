@@ -11,7 +11,7 @@ const DashboardNavbar = ({name}:{name:string}) => {
                 </div>
                 
                 <div>
-                    <Link href='/contact' className='text-secondary flex flex-row justify-center items-center gap-x-5'>
+                    <Link href='#' className='text-secondary flex flex-row justify-center items-center gap-x-5'>
                         <Image src={user} alt='user' className=' w-5' />
                         <span>{name}</span>
                     </Link>
