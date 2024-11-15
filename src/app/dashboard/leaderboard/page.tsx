@@ -70,7 +70,7 @@ const Leaderboard = () => {
                         <div className='flex flex-col gap-y-5'>
                             {
                                 loading ? (<p>Loading...</p>) :
-                                    maleActive && (maleActive.slice(0,2).map((item: any, index: number) => (
+                                    maleActive && (maleActive.slice(0,3).map((item: any, index: number) => (
                                         <div key={index} className={`flex flex-row gap-x-10 w-[80%] ${index == 0 ? 'bg-primary text-secondary p-2' : ' '}`}>
                                             <p className='text-secondary text-[15px]'>{index + 1}</p>
                                             <p className='w-[35%] text-[15px]'>{item.fullname}</p>
@@ -84,7 +84,7 @@ const Leaderboard = () => {
                             <h1 className='font-bold'>Active Top Females</h1>
                             {
                                 loading ? (<p>Loading...</p>) :
-                                    femaleActive && (femaleActive.slice(0,2).map((item: any, index: number) => (
+                                    femaleActive && (femaleActive.slice(0,3).map((item: any, index: number) => (
                                         <div key={index} className={`flex flex-row gap-x-10 w-[80%] ${index == 0 ? 'bg-primary text-secondary p-2' : ' '}`}>
                                             <p className='text-secondary text-[15px]'>{index + 1}</p>
                                             <p className='w-[35%] text-[15px]'>{item.fullname}</p>
