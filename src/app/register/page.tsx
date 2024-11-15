@@ -1,5 +1,7 @@
 'use client'
 import Navbar from '@/components/Navbar'
+import Image from 'next/image'
+import Loader from '../../../public/loader.gif'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,7 +19,8 @@ const Register = () => {
     const emailRef = useRef<any>(null);
     const [checked, setChecked]= useState<any>();
     const [warning, setWarning] = useState<string>();
-
+    const [loading, setLoading] = useState<boolean>(false);
+    
     const user = useSelector((state: RootState) => state.userInfo.user);
     console.log(user);
     const dispatch = useDispatch();
@@ -33,9 +36,8 @@ const Register = () => {
         return form;
     }
     const handleSubmit = async (event: any) => {
-        console.log(phoneRef.current?.value, checked)
         event.preventDefault();
-        console.log(genderRef.current?.value, activityRef.current.value, emailRef.current.value)
+        setLoading(true);
         if(!checked){
             setWarning('Please agree to Terms and Conditions');
             return;
@@ -147,10 +149,8 @@ const Register = () => {
                         {warning && <p className='text-red-500'>{warning}</p>}
                     </div>
                     <button onClick={handleSubmit} className={`flex flex-row justify-center items-center text-center bg-secondary text-primary rounded-full px-3 py-4 my-5 ${!checked?'opacity-50 cursor-not-allowed':''}`}>
-                        Register
+                        {loading?(<Image src={Loader} width={40} className='h-6 object-cover' alt='loader'/>):"Register"}
                     </button>
-
-
                 </div>
                 {/* </form> */}
             </div>
