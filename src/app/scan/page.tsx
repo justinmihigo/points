@@ -47,20 +47,21 @@ const Scan = () => {
     }
   }
 
-  const handleRegistration = (result: any) => {
+  const handleRegistration = async (result: any) => {
     console.log('register', result);
 
-    if (!userFromLs && result && result.type === 'registration') {
+    if (!userFromLs && !userFromLs?.fullname && result && result.type === 'registration') {
       console.log('registering');
       dispatch(addResult({ result: result.points, message: "Thanks for the registration" }));
-      dispatch(setUser({ ...user, type: result.dedicated === 'active' ? 'active' : 'inactive', isActive: result.dedicated === 'active', hasScanned: [result.name], points: result.points }));
+       dispatch(setUser({ ...user, type: result.dedicated === 'active' ? 'active' : 'inactive', isActive: result.dedicated === 'active', hasScanned: [result.name], points: result.points }));
       localStorage.setItem('user', JSON.stringify({ ...user, type: result.dedicated === 'active' ? 'active' : 'inactive', isActive: result.dedicated === 'active', points: result.points, hasScanned: [result.name] }));
-      console.log(user);
+      console.log('results', results);
+      console.log('user from scan',user);
       router.push('/register')
       return;
     }
     if (userFromLs && result.type === 'registration') {
-      dispatch(addResult({ results: '', message: "already registered" }))
+      dispatch(addResult({ results: '', message: "Already registered" }))
       router.push('/dashboard');
       return;
     }
@@ -145,11 +146,11 @@ const Scan = () => {
       const fetchedData = await getQrResult(res);
       console.log(fetchedData);
       if (fetchedData && fetchedData.type === 'registration') {
-        handleRegistration(fetchedData);
+        await handleRegistration(fetchedData);
         return;
       }
       else {
-        handlePoints(fetchedData);
+        await handlePoints(fetchedData);
         return;
       }
     }

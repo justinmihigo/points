@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import scanResults from "./scan/scanResSlice"
 import userInfo from "./user/user"
+import { createWrapper } from "next-redux-wrapper";
 const store= ()=>{
    return configureStore({
         reducer: {

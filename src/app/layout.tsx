@@ -19,7 +19,7 @@ const poppins = Poppins({
 // };
 
 export default function RootLayout({
-  children,
+  children,...props
 }: Readonly<{
   children: React.ReactNode;
 }>) {

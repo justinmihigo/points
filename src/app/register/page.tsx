@@ -2,7 +2,7 @@
 import Navbar from '@/components/Navbar'
 import Image from 'next/image'
 import Loader from '../../../public/loader.gif'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/utils/store'
@@ -10,19 +10,20 @@ import { setUser } from '@/utils/user/user'
 import { PhoneInput } from 'react-international-phone'
 import 'react-international-phone/style.css'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 const Register = () => {
-    const ENV_PRODUCTION= process.env.ENV_PRODUCTION || 'https://points-be.onrender.com';
+    const ENV_PRODUCTION = process.env.ENV_PRODUCTION || 'https://points-be.onrender.com';
     const phoneRef = useRef<any>(null);
     const fullnameRef = useRef<HTMLInputElement>(null);
     const genderRef = useRef<any>(null);
     const activityRef = useRef<any>(null);
     const emailRef = useRef<any>(null);
-    const [checked, setChecked]= useState<any>();
+    const [checked, setChecked] = useState<any>();
     const [warning, setWarning] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
-    
+    const [info, setInfo] = useState<any>();
     const user = useSelector((state: RootState) => state.userInfo.user);
-    console.log(user);
+    console.log('info', info );
     const dispatch = useDispatch();
 
     const handleSaveUser = async (user: any) => {
@@ -38,7 +39,7 @@ const Register = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         setLoading(true);
-        if(!checked){
+        if (!checked) {
             setWarning('Please agree to Terms and Conditions');
             return;
         }
@@ -50,8 +51,8 @@ const Register = () => {
                     favoriteActivity: activityRef.current.value,
                     email: emailRef.current.value,
                     gender: genderRef.current.value,
-                    type: user.type, hasScanned: user.hasScanned,
-                    points: user.points,
+                    type: info.type, hasScanned: info.hasScanned,
+                    points: info.points,
                 }));
             localStorage.setItem('user', JSON.stringify(
                 {
@@ -60,8 +61,8 @@ const Register = () => {
                     favoriteActivity: activityRef.current.value,
                     email: emailRef.current.value,
                     gender: genderRef.current.value,
-                    type: user.type, hasScanned: user.hasScanned,
-                    points: user.points
+                    type: info.type, hasScanned: info.hasScanned,
+                    points: info.points
                 }));
             const response = await handleSaveUser({
                 fullname: fullnameRef.current.value,
@@ -69,9 +70,9 @@ const Register = () => {
                 gender: genderRef.current.value,
                 favoriteActivity: activityRef.current.value,
                 email: emailRef.current.value,
-                status: user.type,
-                hasScanned: user.hasScanned,
-                points: user.points
+                status: info.type,
+                hasScanned: info.hasScanned,
+                points: info.points
             });
             const data = await response.json();
             console.log(data);
@@ -94,21 +95,22 @@ const Register = () => {
         else {
             setWarning('Please fill in all fields');
         }
-        
+
     }
 
     const router = useRouter();
     useEffect(() => {
         const userFromLs = JSON.parse(localStorage.getItem('user')!);
+        setInfo(userFromLs);
         if (userFromLs?.token!) {
             router.push('/dashboard');
         }
     }, []);
-   useEffect(()=>{
-    window.onbeforeunload=()=>{
-        return "By reloading this page you might loose your points are sure you want to relaod"
-    }
-   },[])
+    useEffect(() => {
+        window.onbeforeunload = () => {
+            return "By reloading this page you might loose your points are sure you want to relaod"
+        }
+    }, [])
     return (
         <>
             <Navbar />
@@ -142,14 +144,14 @@ const Register = () => {
                         <option value="Inactive">Here for the vibes!</option>
                     </select>
                     <div className='flex flex-row gap-x-4 items-center'>
-                        <input type="checkbox" onChange={(event)=>setChecked(event.target.value)} id='terms' name='terms' className='w-5 h-5' />
+                        <input type="checkbox" onChange={(event) => setChecked(event.target.value)} id='terms' name='terms' className='w-5 h-5' />
                         <label htmlFor='terms'>I accept <Link href='/terms' className='text-blue-500 underline'>Terms and conditions</Link></label>
                     </div>
                     <div>
                         {warning && <p className='text-red-500'>{warning}</p>}
                     </div>
-                    <button onClick={handleSubmit} className={`flex flex-row justify-center items-center text-center bg-secondary text-primary rounded-full px-3 py-4 my-5 ${!checked?'opacity-50 cursor-not-allowed':''}`}>
-                        {loading?(<Image src={Loader} width={40} className='h-6 object-cover' alt='loader'/>):"Register"}
+                    <button onClick={handleSubmit} className={`flex flex-row justify-center items-center text-center bg-secondary text-primary rounded-full px-3 py-4 my-5 ${!checked ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        {loading ? (<Image src={Loader} width={40} className='h-6 object-cover' alt='loader' />) : "Register"}
                     </button>
                 </div>
                 {/* </form> */}
@@ -157,5 +159,13 @@ const Register = () => {
         </>
     )
 }
+const FinalRegister = () => {
+    return (
+        <Suspense>
+            <Register />
+        </Suspense>
 
-export default Register
+    )
+}
+
+export default dynamic(()=>Promise.resolve(FinalRegister), {ssr:false});
