@@ -1,16 +1,15 @@
-'use client'
-import React, { useEffect, useState } from 'react'
+"use client"
+import React, { FunctionComponent, useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Scanner } from "@yudiel/react-qr-scanner"
 import { useDispatch, useSelector } from 'react-redux';
 import { addResult } from '@/utils/scan/scanResSlice';
 import { setUser } from '@/utils/user/user';
-import CryptoJS, { AES } from "crypto-js"
 import { RootState } from '@/utils/store';
-const scan = () => {
-  const ENV_PRODUCTION= process.env.ENV_PRODUCTION || 'https://points-be.onrender.com';
-  const router = useRouter();
+const Scan = () => {
   const searchParams = useSearchParams();
+  const ENV_PRODUCTION = process.env.ENV_PRODUCTION || 'https://points-be.onrender.com';
+  const router = useRouter();
   const [userFromLs, setUserFromLs] = useState<any>();
   const [qrResult, setQrResult] = useState(null);
   const user = useSelector((state: RootState) => state.userInfo.user);
@@ -68,7 +67,8 @@ const scan = () => {
   }
   const handlePoints = async (data: any) => {
     console.log('points', data);
-    if (userFromLs && data && data.type !== 'registration') {
+    console.log(userFromLs);
+    if (data && data.type !== 'registration') {
       const value = data.points;
       const userls = JSON.parse(localStorage.getItem('user') as any);
       const before = Number(userls.user.points);
@@ -132,15 +132,15 @@ const scan = () => {
   }
   const handleScan = async (result: any) => {
     console.log('result', result);
-    let res='';
-    if(Array.isArray(result) && result[0].rawValue.length>0 && result[0].rawValue.includes('http')){
-        res= result[0].rawValue.slice(-24);
-        console.log(res);
+    let res = '';
+    if (Array.isArray(result) && result[0].rawValue.length > 0 && result[0].rawValue.includes('http')) {
+      res = result[0].rawValue.slice(-24);
+      console.log(res);
     }
-    else{
-      res= result;
+    else {
+      res = result;
     }
-    
+
     if (res) {
       const fetchedData = await getQrResult(res);
       console.log(fetchedData);
@@ -159,7 +159,7 @@ const scan = () => {
     console.log('userFromLs', userFromLs);
     setUserFromLs(userls);
   }, []);
-  
+
   const handleParams = async () => {
     const id = searchParams.get('id');
     if (id) {
@@ -192,5 +192,12 @@ const scan = () => {
     </div>
   )
 }
+const FinalScan: FunctionComponent = () => {
+  return (
+    <Suspense>
+      <Scan />
+    </Suspense>
 
-export default scan
+  )
+}
+export default FinalScan

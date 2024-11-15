@@ -2,7 +2,7 @@
 import { Poppins } from "next/font/google"
 import "./globals.css";
 import ReduxProvider from "./StoreProvider";
-import { Suspense } from "react";
+
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -24,7 +24,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Suspense>
     <ReduxProvider>
       <html lang="en">
         <body
@@ -34,6 +33,5 @@ export default function RootLayout({
         </body>
       </html>
     </ReduxProvider>
-    </Suspense>
   );
 }
